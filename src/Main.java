@@ -1,4 +1,5 @@
 import org.osbot.rs07.api.Inventory;
+import org.osbot.rs07.api.NPCS;
 import org.osbot.rs07.api.ai.activity.Location;
 import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.constants.Banks;
@@ -14,8 +15,6 @@ public class Main extends Script {
     private final int FoodID = 379;
     public long startTime = 0L, millis = 0L, hours = 0L;
     Area cows = new Area(3254, 3256, 3264, 3296);
-    PaintAPI paint = new PaintAPI();
-    private long timeBegan;
     private long timeRan;
     private int beginningXp;
     private int AttackLevel;
@@ -25,27 +24,25 @@ public class Main extends Script {
     @Override
     public void onStart() throws InterruptedException {
 
-        getCamera().toTop();
-
-        timeBegan = System.currentTimeMillis();
-        startTime = System.currentTimeMillis();
-        AttackLevel = skills.getVirtualLevel(Skill.ATTACK);
-        DefenceLevel = skills.getVirtualLevel(Skill.DEFENCE);
-        StrengthLevel = skills.getVirtualLevel(Skill.STRENGTH);
         super.onStart();
     }
 
     @Override
     public int onLoop() throws InterruptedException {
         log("STARTED ON LOOP");
-        if (isReadyToAttack()){
-            attack();
+        if (hasFood() && !getCombat().isFighting() && !myPlayer().isAnimating() && !myPlayer().isUnderAttack() && !myPlayer().isMoving())
+        {
+            sleep(random(1700, 2300));
             log("RUNNING ATTACK IN ON LOOP");
+            attack();
+            sleep(random(1700, 2300));
         } else {
+            sleep(random(1700, 2300));
             log("RUNNING ELSE BANK METHOD IN ON LOOP");
             bank();
+            sleep(random(1700, 2300));
         }
-        return 0;
+        return 2000;
     }
 
     public void bank() throws InterruptedException {
@@ -89,7 +86,7 @@ public class Main extends Script {
 
         if (getHpPercent() < 50){
             heal();
-        }
+        } else {
 
         NPC enemy = getNpcs().closest(ENEMY_IDS);
 
@@ -101,11 +98,12 @@ public class Main extends Script {
         } else {
             walking.webWalk(cows.getRandomPosition());
         }
+        }
     }
 
 
     public boolean isReadyToAttack(){
-        if (hasFood())
+        if (!hasFood())
             return false;
         if (getCombat().isFighting())
             return false;
@@ -113,15 +111,18 @@ public class Main extends Script {
     }
 
     public int getHpPercent(){
-        log("getHpPercent()");
+        log("getHpPercent");
+        int hpPercent = 0;
 
-        float staticHp = getSkills().getStatic(Skill.HITPOINTS);
-        float dynamicHp = getSkills().getDynamic(Skill.HITPOINTS);
+        int staticHp = getSkills().getStatic(Skill.HITPOINTS);
+        int dynamicHp = getSkills().getDynamic(Skill.HITPOINTS);
 
-        return (int) (100 * (dynamicHp / staticHp));
+        hpPercent = (100 * (dynamicHp / staticHp));
+
+        return hpPercent;
     }
     public boolean hasFood(){
-        return !getInventory().contains(FoodID);
+        return getInventory().contains(FoodID);
 
     }
 }
