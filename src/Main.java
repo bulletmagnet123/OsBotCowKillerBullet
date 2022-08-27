@@ -94,8 +94,7 @@ public class Main extends Script {
 
     }
 
-    public void heal() throws InterruptedException {
-        sleep(random(1700, 2300));
+    public void heal() {
         getInventory().getItem(FoodID).interact("Eat");
     }
 
