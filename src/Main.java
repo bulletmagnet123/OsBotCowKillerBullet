@@ -67,7 +67,7 @@ public class Main extends Script {
 
     public void bank() throws InterruptedException {
         log("Running bank method");
-        if (!getInventory().contains("Lobster") || !getInventory().contains("Brass key")) {
+        if (!getInventory().contains("Lobster")) {
             log("has no food or inventory is full");
             walking.webWalk(Banks.GRAND_EXCHANGE);
             sleep(random(1400, 2700));
@@ -77,9 +77,9 @@ public class Main extends Script {
             sleep(random(1700, 2300));
             getBank().withdraw(FoodID, 21);
             sleep(random(1700, 2300));
-            if (!getInventory().contains("Brass key")) {
-                getBank().withdraw("Brass key", 1);
-            } else
+            //if (!getInventory().contains("Brass key")) {
+            //    getBank().withdraw("Brass key", 1);
+            //} else
                 getBank().close();
             sleep(random(1700, 2300));
         }
@@ -107,15 +107,15 @@ public class Main extends Script {
             heal();
         } else {
 
-            NPC enemy = getNpcs().closest(ENEMY_IDS_Hill_Giants);
+            NPC enemy = getNpcs().closest(ENEMY_IDS_COWS);
 
-            if (HillGiants.contains(myPlayer().getPosition())) {
-                if (enemy != null && !enemy.isUnderAttack() && HillGiants.contains(enemy))
+            if (cows.contains(myPlayer().getPosition())) {
+                if (enemy != null && !enemy.isUnderAttack() && cows.contains(enemy))
 
                     if (enemy.interact("Attack"))
                         sleep(random(1700, 2300));
             } else {
-                walking.webWalk(HillGiants.getRandomPosition());
+                walking.webWalk(cows.getRandomPosition());
             }
         }
     }
@@ -142,7 +142,11 @@ public class Main extends Script {
     }
 
     public boolean hasFood() {
-        return getInventory().contains(FoodID);
+        if (getInventory().contains(FoodID)) {
+            return  true;
+        } else {
+            return false;
+        }
 
     }
 
